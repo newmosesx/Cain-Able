@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: CainAble
+
+  jwt:
+    secret: bNsa/EKMUPsmIkmk9cWvugSUsVzwjEM7MG36mnlzc6o=
+
+  datasource:
+    url: "jdbc:postgresql://172.24.224.1:5432/nevans-db"
+    username: "postgres"
+    password: "Vegetta777!"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+server:
+  port: 8094
