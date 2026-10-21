@@ -1,5 +1,4 @@
-package nevans.project.entities;
-
+package nevans.project.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,28 +14,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users-tb")
-public class User {
+@Table(name = "roles-tb")
+public class Role {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "role_id")
+    private long roleId;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "username")
-    private String username;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "role_name")
+    private String roleName;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -53,6 +39,9 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @OneToOne(mappedBy = "user")
-    private Role role;
+    // No back-reference to User here. A bidirectional @OneToMany would
+    // work, but combined with Lombok's @Data (which generates toString/
+    // equals/hashCode over every field) a User <-> Role cycle causes
+    // infinite recursion the first time either gets logged or hashed.
+    // Not worth it for what this entity needs to do.
 }

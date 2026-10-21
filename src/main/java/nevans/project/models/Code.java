@@ -1,4 +1,4 @@
-package nevans.project.entities;
+package nevans.project.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

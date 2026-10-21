@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class JwtService {
+public class AuthenticationService {
 
     @Value("${spring.jwt.secret}")
     private String SECRET;

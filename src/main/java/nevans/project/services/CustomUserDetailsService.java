@@ -1,14 +1,13 @@
 package nevans.project.services;
 
 
-import nevans.project.entities.Role;
-import nevans.project.entities.User;
+import nevans.project.models.Role;
+import nevans.project.models.User;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import nevans.project.repository.RolesRepository;
 import nevans.project.repository.UsersRepository;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
@@ -17,33 +16,32 @@ import java.util.Optional;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UsersRepository userRepo;
-    private final RolesRepository roleRepo;
 
     @Autowired
-    public CustomUserDetailsService(UsersRepository userRepo, RolesRepository roleRepo) {
+    public CustomUserDetailsService(UsersRepository userRepo) {
         this.userRepo = userRepo;
-        this.roleRepo = roleRepo;
     }
 
     @Override
     public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
 
-        Optional<User> userList = userRepo.findByUsername(username);
+        Optional<User> userOptional = userRepo.findByUsername(username);
 
-        if (userList.isEmpty()){
+        if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException("Username not found");
         }
 
-        User userObj = userList.get();
-        Optional<Role> roleList = roleRepo.findById(userObj.getId());
+        User userObj = userOptional.get();
+        Role roleObj = userObj.getRole();
 
-        if (roleList.isEmpty()){
-            throw new UsernameNotFoundException("Not a username exception: Must be changed to rol not found exception");
+        if (roleObj == null) {
+            throw new UsernameNotFoundException("User has no role assigned");
         }
 
-        Role roleObj = roleList.get();
-
-
+        // Spring Security's .roles(...) expects the bare name (e.g. "ADMIN"),
+        // not a "ROLE_" prefixed one -- it adds that prefix itself and will
+        // throw if it's already there. Keep roleName in the DB as "ADMIN" /
+        // "USER", not "ROLE_ADMIN".
         return org.springframework.security.core.userdetails.User.builder()
                 .username(userObj.getUsername())
                 .password(userObj.getPassword())
